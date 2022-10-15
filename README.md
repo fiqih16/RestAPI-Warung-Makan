@@ -7,4 +7,5 @@ github.com/gin-gonic/gin
 github.com/joho/godotenv
 github.com/dgrijalva/jwt-go
 github.com/golang/crypto
+github.com/mashingan/smapping
 ```
