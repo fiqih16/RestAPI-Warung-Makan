@@ -3,6 +3,8 @@ package main
 import (
 	"rumah-makan/config"
 	"rumah-makan/controller"
+	"rumah-makan/repository"
+	"rumah-makan/service"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -10,7 +12,15 @@ import (
 
 var (
 	db *gorm.DB = config.SetDBConn()
-	authController controller.AuthController = controller.NewAuthController()
+	// Repository
+	customerRepository repository.CustomerRepository = repository.NewCustomerRepository(db)
+	
+	// Service
+	jwtService service.JWTService = service.NewJWTService()
+	authService service.AuthService = service.NewAuthService(customerRepository)
+
+	// Controller
+	authController controller.AuthController = controller.NewAuthController(authService, jwtService)
 )
 
 func main() {

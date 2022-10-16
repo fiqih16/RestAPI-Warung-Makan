@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"rumah-makan/model"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
@@ -26,7 +27,7 @@ func SetDBConn() *gorm.DB {
 		panic("Failed to connect to database")
 	}
 	// Isi model
-	// db.AutoMigrate(&entity.Book{}, &entity.User{})
+	db.AutoMigrate(&model.Customer{}, &model.Menu{}, &model.Transaction{})
 	return db
 }
 

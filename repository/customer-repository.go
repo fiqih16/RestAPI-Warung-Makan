@@ -14,6 +14,7 @@ type CustomerRepository interface {
 	VerifyCredential(email string, password string) interface{}
 	IsDuplicateEmail(email string) (tx *gorm.DB)
 	FindByEmail(email string) model.Customer
+	ProfileCustomer(customerID string) model.Customer
 }
 
 type customerConnection struct {
@@ -61,6 +62,12 @@ func (db *customerConnection) IsDuplicateEmail(email string) (tx *gorm.DB) {
 func (db *customerConnection) FindByEmail(email string) model.Customer {
 	var customer model.Customer
 	db.connection.Where("email = ?", email).Take(&customer)
+	return customer
+}
+
+func (db *customerConnection) ProfileCustomer(customerID string) model.Customer {
+	var customer model.Customer
+	db.connection.Find(&customer, customerID)
 	return customer
 }
 

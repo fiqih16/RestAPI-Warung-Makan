@@ -6,8 +6,8 @@ import (
 	"rumah-makan/helper"
 	"rumah-makan/service"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
 )
 
 func AuthorizeJWT(jwtService service.JWTService) gin.HandlerFunc {
