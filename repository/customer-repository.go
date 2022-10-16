@@ -29,7 +29,7 @@ func NewCustomerRepository(db *gorm.DB) CustomerRepository {
 
 func (db *customerConnection) InsertCustomer(customer model.Customer) model.Customer {
 	customer.Password = hashAndSalt([]byte(customer.Password))
-	db.connection.Save(&customer)
+	db.connection.Exec("INSERT INTO customers (id, name, email, password) VALUES (?, ?, ?, ?)", customer.ID, customer.Name, customer.Email, customer.Password)
 	return customer
 }
 
@@ -41,7 +41,7 @@ func (db *customerConnection) UpdateCustomer(customer model.Customer) model.Cust
 		db.connection.Find(&tempCustomer, customer.ID)
 		customer.Password = tempCustomer.Password
 	}
-	db.connection.Save(&customer)
+	db.connection.Exec("UPDATE customers SET name = ?, email = ?, password = ? WHERE id = ?", customer.Name, customer.Email, customer.Password, customer.ID)
 	return customer
 }
 

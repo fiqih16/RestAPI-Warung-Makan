@@ -49,9 +49,9 @@ func (c *customerController) Update(context *gin.Context) {
 		panic(err.Error())
 	}
 	customerUpdateDTO.ID = id
-	u := c.customerService.Update(customerUpdateDTO)
-	res := helper.BuildResponse(true, "OK!", u)
-	context.JSON(http.StatusOK, res)
+	customer := c.customerService.Update(customerUpdateDTO)
+	response := helper.BuildResponse(true, "OK!", customer)
+	context.JSON(http.StatusOK, response)
 }
 
 func (c *customerController) Profile(context *gin.Context) {
