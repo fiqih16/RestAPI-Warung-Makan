@@ -8,7 +8,7 @@ type Transaction struct {
 	Customer   Customer `gorm:"foreignKey:CustomerID;constraint:onUpdate:CASCADE,onDelete:CASCADE" json:"customer"`
 	MenuID     uint64   `gorm:"not null" json:"-"`
 	Menu       Menu     `gorm:"foreignKey:MenuID;constraint:onUpdate:CASCADE,onDelete:CASCADE" json:"menu"`
-	Tanggal    time.Time
+	Tanggal    time.Time `json:"tanggal"`
 	JumlahBeli int `gorm:"type:int" json:"jumlah_beli"`
 	TotalBayar int `gorm:"type:int" json:"total_bayar"`
 }

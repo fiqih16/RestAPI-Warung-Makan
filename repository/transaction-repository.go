@@ -25,7 +25,7 @@ func NewTransactionRepository(dbConn *gorm.DB) TransactionRepository {
 }
 
 func (db *transactionConnection) InsertTransaction(t model.Transaction) model.Transaction {
-	db.connection.Save(&t)
+	db.connection.Exec("INSERT INTO transactions (customer_id, menu_id, jumlah_beli, total_bayar, tanggal) VALUES (?, ?, ?, ?, ?)", t.CustomerID, t.MenuID, t.JumlahBeli, t.TotalBayar, t.Tanggal)
 	return t
 }
 

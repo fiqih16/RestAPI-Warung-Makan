@@ -16,17 +16,20 @@ var (
 	// Repository
 	customerRepository repository.CustomerRepository = repository.NewCustomerRepository(db)
 	menuRepository repository.MenuRepository = repository.NewMenuRepository(db)
-	
+	transactionRepository repository.TransactionRepository = repository.NewTransactionRepository(db)
+
 	// Service
 	jwtService service.JWTService = service.NewJWTService()
 	authService service.AuthService = service.NewAuthService(customerRepository)
 	customerService service.CustomerService = service.NewCustomerService(customerRepository)
 	menuService service.MenuService = service.NewMenuService(menuRepository)
+	transactionService service.TransactionService = service.NewTransactionService(transactionRepository, menuRepository)
 
 	// Controller
 	authController controller.AuthController = controller.NewAuthController(authService, jwtService)
 	customerController controller.CustomerController = controller.NewCustomerController(customerService, jwtService)
 	menuController controller.MenuController = controller.NewMenuController(menuService, jwtService)
+	transactionController controller.TransactionController = controller.NewTransactionController(transactionService, jwtService)
 )
 
 func main() {
@@ -52,6 +55,11 @@ func main() {
 		menuRoutes.GET("/:id", menuController.FindMenuByID)
 		menuRoutes.PUT("/:id", menuController.Update)
 		menuRoutes.DELETE("/:id", menuController.Delete)
+	}
+
+	transactionRoutes := r.Group("api/transaction", middleware.AuthorizeJWT(jwtService))
+	{
+		transactionRoutes.POST("/", transactionController.InsertTransaction)
 	}
 	
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")

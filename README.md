@@ -27,8 +27,9 @@ github.com/mashingan/smapping
 | `GET`    | api/customer/profile | Get Customer                                                          |
 | `PUT`    | api/customer/profile | Edit Customer                                                         |
 | `GET`    | api/menu/            | Get All Menu                                                          |
-| `POST`   | api/menu/            | Post Menu                                                             |
+| `POST`   | api/menu/            | Create Menu                                                           |
 | `GET`    | api/menu/:id         | Get Menu By Id                                                        |
 | `PUT`    | api/menu/:id         | Edit Menu By Id                                                       |
 | `DELETE` | api/menu/:id         | Delete Menu By Id                                                     |
+| `POST`   | api/transaction/     | Create Transaction                                                    |
 | `GET`    | /                    |                                                                       |
