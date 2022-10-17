@@ -10,6 +10,10 @@ import (
 
 type TransactionService interface {
 	Insert(t dto.TransactionCreateDTO) model.Transaction
+	Update(t dto.TransactionUpdateDTO) model.Transaction
+	Delete(t model.Transaction)
+	All() []model.Transaction
+	// IsAllowedToEdit(customerID string, transactionID uint64) bool
 }
 
 type transactionService struct {
@@ -34,4 +38,25 @@ func (service *transactionService) Insert(t dto.TransactionCreateDTO) model.Tran
 
 	res := service.transactionRepository.InsertTransaction(transaction)
 	return res
+}
+
+func (service *transactionService) Update(t dto.TransactionUpdateDTO) model.Transaction {
+	transaction := model.Transaction{}
+	transaction.ID = t.ID
+	transaction.CustomerID = t.CustomerID
+	transaction.MenuID = t.MenuID
+	transaction.JumlahBeli = t.JumlahBeli
+	transaction.TotalBayar = service.menuRepository.FindMenuByID(t.MenuID).Harga * t.JumlahBeli
+	transaction.Tanggal = time.Now()
+
+	res := service.transactionRepository.UpdateTransaction(transaction)
+	return res
+}
+
+func (service *transactionService) Delete(t model.Transaction) {
+	service.transactionRepository.DeleteTransaction(t)
+}
+
+func (service *transactionService) All() []model.Transaction {
+	return service.transactionRepository.AllTransaction()
 }

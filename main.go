@@ -60,6 +60,9 @@ func main() {
 	transactionRoutes := r.Group("api/transaction", middleware.AuthorizeJWT(jwtService))
 	{
 		transactionRoutes.POST("/", transactionController.InsertTransaction)
+		transactionRoutes.GET("/", transactionController.AllTransaction)
+		transactionRoutes.PUT("/:id", transactionController.UpdateTransaction)
+		transactionRoutes.DELETE("/:id", transactionController.DeleteTransaction)
 	}
 	
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")

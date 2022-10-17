@@ -33,3 +33,4 @@ github.com/mashingan/smapping
 | `DELETE` | api/menu/:id         | Delete Menu By Id                                                     |
 | `POST`   | api/transaction/     | Create Transaction                                                    |
 | `GET`    | /                    |                                                                       |
+| `DELETE` | api/transaction/:id  | Delete Transaction By Id                                              |
