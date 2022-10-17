@@ -25,12 +25,13 @@ func NewMenuRepository(dbConn *gorm.DB) MenuRepository {
 }
 
 func (db *menuConnection) InsertMenu(m model.Menu) model.Menu {
-	db.connection.Save(&m)
+	db.connection.Exec("INSERT INTO menus (customer_id, nama_menu, harga, status) VALUES (?, ?, ?, ?)", m.CustomerID, m.NamaMenu, m.Harga, m.Status)
 	return m
 }
 
 func (db *menuConnection) UpdateMenu(m model.Menu) model.Menu {
-	db.connection.Save(&m)
+	db.connection.Exec("UPDATE menus SET customer_id = ?, nama_menu = ?, harga = ?, status = ? WHERE id = ?", m.CustomerID, m.NamaMenu, m.Harga, m.Status, m.ID)
+	db.connection.Preload("Customer").Find(&m)
 	return m
 }
 
@@ -40,7 +41,7 @@ func (db *menuConnection) DeleteMenu(m model.Menu) {
 
 func (db *menuConnection) AllMenu() []model.Menu {
 	var menus []model.Menu
-	db.connection.Find(&menus)
+	db.connection.Preload("Customer").Find(&menus)
 	return menus
 }
 

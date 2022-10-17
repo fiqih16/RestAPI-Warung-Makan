@@ -9,3 +9,23 @@ github.com/dgrijalva/jwt-go
 github.com/golang/crypto
 github.com/mashingan/smapping
 ```
+
+## Installation
+
+- `git clone https://github.com/fiqih16/RestAPI-Warung-Makan`
+- `cd RestAPI-Warung-Makan`
+- Edit `.env`
+  - Set your database connection details
+- `go run main.go`
+
+## API Endpoints
+
+| Methods | Endpoints            | Description                                                           |
+| :------ | :------------------- | :-------------------------------------------------------------------- |
+| `POST`  | api/auth/login       | login account must given `email` & `password` to body request         |
+| `POST`  | api/auth/register    | Register account must given `name`,`email`,`password` to body request |
+| `GET`   | api/customer/profile | Get Customer                                                          |
+| `PUT`   | api/customer/profile | Edit Customer                                                         |
+| `GET`   | /                    |                                                                       |
+| `GET`   | /                    |                                                                       |
+| `GET`   | /                    |                                                                       |

@@ -15,15 +15,18 @@ var (
 	db *gorm.DB = config.SetDBConn()
 	// Repository
 	customerRepository repository.CustomerRepository = repository.NewCustomerRepository(db)
+	menuRepository repository.MenuRepository = repository.NewMenuRepository(db)
 	
 	// Service
 	jwtService service.JWTService = service.NewJWTService()
 	authService service.AuthService = service.NewAuthService(customerRepository)
 	customerService service.CustomerService = service.NewCustomerService(customerRepository)
+	menuService service.MenuService = service.NewMenuService(menuRepository)
 
 	// Controller
 	authController controller.AuthController = controller.NewAuthController(authService, jwtService)
 	customerController controller.CustomerController = controller.NewCustomerController(customerService, jwtService)
+	menuController controller.MenuController = controller.NewMenuController(menuService, jwtService)
 )
 
 func main() {
@@ -40,6 +43,15 @@ func main() {
 	{
 		customerRoutes.GET("/profile", customerController.Profile)
 		customerRoutes.PUT("/profile", customerController.Update)
+	}
+
+	menuRoutes := r.Group("api/menu", middleware.AuthorizeJWT(jwtService))
+	{
+		menuRoutes.GET("/", menuController.All)
+		menuRoutes.POST("/", menuController.Insert)
+		menuRoutes.GET("/:id", menuController.FindMenuByID)
+		menuRoutes.PUT("/:id", menuController.Update)
+		menuRoutes.DELETE("/:id", menuController.Delete)
 	}
 	
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
