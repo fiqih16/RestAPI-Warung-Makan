@@ -46,6 +46,6 @@ func (db *menuConnection) AllMenu() []model.Menu {
 
 func (db *menuConnection) FindMenuByID(menuID uint64) model.Menu {
 	var menu model.Menu
-	db.connection.Find(&menu, menuID)
+	db.connection.Preload("Customer").Find(&menu, menuID)
 	return menu
 }
