@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"rumah-makan/dto"
 	"rumah-makan/model"
 	"rumah-makan/repository"
@@ -13,7 +14,7 @@ type TransactionService interface {
 	Update(t dto.TransactionUpdateDTO) model.Transaction
 	Delete(t model.Transaction)
 	All() []model.Transaction
-	// IsAllowedToEdit(customerID string, transactionID uint64) bool
+	IsAllowedToEdit(customerID string, transactionID uint64) bool
 }
 
 type transactionService struct {
@@ -47,7 +48,7 @@ func (service *transactionService) Update(t dto.TransactionUpdateDTO) model.Tran
 	transaction.MenuID = t.MenuID
 	transaction.JumlahBeli = t.JumlahBeli
 	transaction.TotalBayar = service.menuRepository.FindMenuByID(t.MenuID).Harga * t.JumlahBeli
-	transaction.Tanggal = time.Now()
+	transaction.Tanggal = time.Now().AddDate(1, 0, 0)
 
 	res := service.transactionRepository.UpdateTransaction(transaction)
 	return res
@@ -59,4 +60,10 @@ func (service *transactionService) Delete(t model.Transaction) {
 
 func (service *transactionService) All() []model.Transaction {
 	return service.transactionRepository.AllTransaction()
+}
+
+func (service *transactionService) IsAllowedToEdit(customerID string, transactionID uint64) bool {
+	t := service.transactionRepository.FindTransactionByID(transactionID)
+	id := fmt.Sprintf("%v", t.CustomerID)
+	return customerID == id
 }

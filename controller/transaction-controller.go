@@ -52,21 +52,22 @@ func (c *transactionController) InsertTransaction(context *gin.Context) {
 }
 
 func (c *transactionController) UpdateTransaction(context *gin.Context) {
-	// var transactionUpdateDTO dto.TransactionUpdateDTO
-	// errDTO := context.ShouldBind(&transactionUpdateDTO)
-	// if errDTO != nil {
-	// 	res := helper.BuildErrorResponse("Failed to process request", errDTO.Error(), helper.EmptyObj{})
-	// 	context.AbortWithStatusJSON(http.StatusBadRequest, res)
-	// } else {
-	// 	authHeader := context.GetHeader("Authorization")
-	// 	token, errToken := c.jwtService.ValidateToken(authHeader)
-	// 	if errToken != nil {
-	// 		panic(errToken.Error())
-	// 	}
-	// 	claims := token.Claims.(jwt.MapClaims)
-	// 	id := fmt.Sprintf("%v", claims["customer_id"])
-
-	// }
+	var transactionUpdateDTO dto.TransactionUpdateDTO
+	errDTO := context.ShouldBind(&transactionUpdateDTO)
+	if errDTO != nil {
+		res := helper.BuildErrorResponse("Failed to process request", errDTO.Error(), helper.EmptyObj{})
+		context.AbortWithStatusJSON(http.StatusBadRequest, res)
+	} else {
+		token := context.GetHeader("Authorization")
+		customerID := c.getCustomerIDByToken(token)
+		convertedCustomerID, err := strconv.ParseUint(customerID, 0, 0)
+		if err == nil {
+			transactionUpdateDTO.CustomerID = convertedCustomerID
+		}
+		result := c.transactionService.Update(transactionUpdateDTO)
+		response := helper.BuildResponse(true, "OK", result)
+		context.JSON(http.StatusOK, response)
+	} 
 }
 
 func (c *transactionController) DeleteTransaction(context *gin.Context) {

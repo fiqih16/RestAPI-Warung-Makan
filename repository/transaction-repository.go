@@ -30,7 +30,7 @@ func (db *transactionConnection) InsertTransaction(t model.Transaction) model.Tr
 }
 
 func (db *transactionConnection) UpdateTransaction(t model.Transaction) model.Transaction {
-	db.connection.Save(&t)
+	db.connection.Exec("UPDATE transactions SET customer_id = ?, menu_id = ?, jumlah_beli = ?, total_bayar = ?, tanggal = ? WHERE id = ?", t.CustomerID, t.MenuID, t.JumlahBeli, t.TotalBayar, t.Tanggal, t.ID)
 	db.connection.Preload("Customer").Find(&t)
 	return t
 }
@@ -47,6 +47,6 @@ func (db *transactionConnection) AllTransaction() []model.Transaction {
 
 func (db *transactionConnection) FindTransactionByID(transactionID uint64) model.Transaction {
 	var transaction model.Transaction
-	db.connection.Preload("Customer").Find(&transaction, transactionID)
+	db.connection.Find(&transaction, transactionID)
 	return transaction
 }
