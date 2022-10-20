@@ -9,7 +9,6 @@ import (
 	"rumah-makan/service"
 	"strconv"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,6 +16,7 @@ type MenuController interface {
 	All(context *gin.Context)
 	FindMenuByID(context *gin.Context)
 	Insert(context *gin.Context)
+	InsertMenuImage(context *gin.Context)
 	Update(context *gin.Context)
 	Delete(context *gin.Context)
 }
@@ -65,14 +65,8 @@ func (c *menuController) Insert(context *gin.Context) {
 		res := helper.BuildErrorResponse("Failed to process request", errDTO.Error(), helper.EmptyObj{})
 		context.AbortWithStatusJSON(http.StatusBadRequest, res)
 	} else {
-		authHeader := context.GetHeader("Authorization")
-		customerID := c.getCustomerIDByToken(authHeader)
-		convertedCustomerID, err := strconv.ParseUint(customerID, 0, 0)
-		if err == nil {
-			menuCreateDTO.CustomerID = convertedCustomerID
-		}
-		result := c.menuService.Insert(menuCreateDTO)
-		response := helper.BuildResponse(true, "OK", result)
+		createdMenu := c.menuService.Insert(menuCreateDTO)
+		response := helper.BuildResponse(true, "OK", createdMenu)
 		context.JSON(http.StatusCreated, response)
 	}
 }
@@ -84,26 +78,20 @@ func (c *menuController) Update(context *gin.Context) {
 		res := helper.BuildErrorResponse("Failed to process request", errDTO.Error(), helper.EmptyObj{})
 		context.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
-	} 
-	authHeader := context.GetHeader("Authorization")
-	token, errToken := c.jwtService.ValidateToken(authHeader)
-	if errToken != nil {
-		panic(errToken.Error())
 	}
-	claims := token.Claims.(jwt.MapClaims)
-	customerID := fmt.Sprintf("%v", claims["customer_id"])
-	if c.menuService.IsAllowedToEdit(customerID, menuUpdateDTO.ID) {
-		id, errID := strconv.ParseUint(customerID, 10, 64)
-		if errID == nil {
-			menuUpdateDTO.CustomerID = id
-		}
-		result := c.menuService.Update(menuUpdateDTO)
-		response := helper.BuildResponse(true, "OK", result)
-		context.JSON(http.StatusOK, response)
-	} else {
-		res := helper.BuildErrorResponse("You dont have permission", "You are not the owner", helper.EmptyObj{})
-		context.AbortWithStatusJSON(http.StatusForbidden, res)
+	
+	id, err := strconv.ParseUint(context.Param("id"), 0, 0)
+	if err != nil {
+		res := helper.BuildErrorResponse("Failed to process request", err.Error(), helper.EmptyObj{})
+		context.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
 	}
+	menuUpdateDTO.ID = id
+	updatedMenu := c.menuService.Update(menuUpdateDTO)
+	response := helper.BuildResponse(true, "OK", updatedMenu)
+	context.JSON(http.StatusOK, response)
+	
+	
 }
 
 func (c *menuController) Delete(context *gin.Context) {
@@ -114,29 +102,42 @@ func (c *menuController) Delete(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, response)
 	} 
 	menu.ID = id
-	authHeader := context.GetHeader("Authorization")
-	token, errToken := c.jwtService.ValidateToken(authHeader)
-	if errToken != nil {
-		panic(errToken.Error())
-	}
-	claims := token.Claims.(jwt.MapClaims)
-	menuID := fmt.Sprintf("%v", claims["customer_id"])
-	if c.menuService.IsAllowedToEdit(menuID, menu.ID) {
-		c.menuService.Delete(menu)
-		response := helper.BuildResponse(true, "Deleted", helper.EmptyObj{})
-		context.JSON(http.StatusOK, response)
-	} else {
-		response := helper.BuildErrorResponse("You dont have permission", "You are not the owner", helper.EmptyObj{})
-		context.JSON(http.StatusForbidden, response)
-	}
+	c.menuService.Delete(menu)
+	response := helper.BuildResponse(true, "OK", helper.EmptyObj{})
+	context.JSON(http.StatusOK, response)
 }
 
-func (c *menuController) getCustomerIDByToken(token string) string {
-	aToken, err := c.jwtService.ValidateToken(token)
+func (c *menuController) InsertMenuImage(context *gin.Context) {
+	file, err := context.FormFile("image")
 	if err != nil {
-		panic(err.Error())
+		res := helper.BuildErrorResponse("Failed to process request image file", err.Error(), helper.EmptyObj{})
+		context.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
 	}
-	claims := aToken.Claims.(jwt.MapClaims)
-	id := fmt.Sprintf("%v", claims["customer_id"])
-	return id
+	menuID, err := strconv.ParseUint(context.Param("id"), 0, 0)
+	if err != nil {
+		res := helper.BuildErrorResponse("Failed to process request menu id", err.Error(), helper.EmptyObj{})
+		context.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	path := fmt.Sprintf("images/%d-%s", menuID, file.Filename)
+	err = context.SaveUploadedFile(file, path)
+	if err != nil {
+		res := helper.BuildErrorResponse("Failed to process request save image", err.Error(), helper.EmptyObj{})
+		context.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	var menu model.Menu = c.menuService.FindMenuByID(menuID)
+	if (menu == model.Menu{}) {
+		res := helper.BuildErrorResponse("Data not found", "No data with given id", helper.EmptyObj{})
+		context.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	menu.Image = path
+	updatedMenu := c.menuService.InsertImage(menuID, menu.Image)
+	response := helper.BuildResponse(true, "OK", updatedMenu)
+	context.JSON(http.StatusOK, response)
 }

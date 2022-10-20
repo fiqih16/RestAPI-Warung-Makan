@@ -12,6 +12,8 @@ type MenuRepository interface {
 	DeleteMenu(m model.Menu)
 	AllMenu() []model.Menu
 	FindMenuByID(menuID uint64) model.Menu
+	FindByID(ID uint64) model.Menu
+	InsertMenuImage(m model.Menu) model.Menu
 }
 
 type menuConnection struct {
@@ -25,13 +27,13 @@ func NewMenuRepository(dbConn *gorm.DB) MenuRepository {
 }
 
 func (db *menuConnection) InsertMenu(m model.Menu) model.Menu {
-	db.connection.Exec("INSERT INTO menus (customer_id, nama_menu, harga, status) VALUES (?, ?, ?, ?)", m.CustomerID, m.NamaMenu, m.Harga, m.Status)
+	db.connection.Exec("INSERT INTO menus (nama_menu, harga, status, image) VALUES (?, ?, ?, ?)", m.NamaMenu, m.Harga, m.Status, m.Image)
 	return m
 }
 
 func (db *menuConnection) UpdateMenu(m model.Menu) model.Menu {
-	db.connection.Exec("UPDATE menus SET customer_id = ?, nama_menu = ?, harga = ?, status = ? WHERE id = ?", m.CustomerID, m.NamaMenu, m.Harga, m.Status, m.ID)
-	db.connection.Preload("Customer").Find(&m)
+	db.connection.Exec("UPDATE menus SET nama_menu = ?, harga = ?, status = ? WHERE id = ?", m.NamaMenu, m.Harga, m.Status, m.ID)
+	db.connection.Find(&m)
 	return m
 }
 
@@ -41,12 +43,24 @@ func (db *menuConnection) DeleteMenu(m model.Menu) {
 
 func (db *menuConnection) AllMenu() []model.Menu {
 	var menus []model.Menu
-	db.connection.Preload("Customer").Find(&menus)
+	db.connection.Find(&menus)
 	return menus
 }
 
 func (db *menuConnection) FindMenuByID(menuID uint64) model.Menu {
 	var menu model.Menu
-	db.connection.Preload("Customer").Find(&menu, menuID)
+	db.connection.Find(&menu, menuID)
 	return menu
+}
+
+func (db *menuConnection) FindByID(ID uint64) model.Menu {
+	var menu model.Menu
+	db.connection.Where("id = ?", ID).Find(&menu)
+	return menu
+}
+
+func (db *menuConnection) InsertMenuImage(m model.Menu) model.Menu {
+	db.connection.Exec("UPDATE menus SET image = ? WHERE id = ?", m.Image, m.ID)
+	db.connection.Find(&m)
+	return m
 }

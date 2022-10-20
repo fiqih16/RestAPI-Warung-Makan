@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"log"
 	"rumah-makan/dto"
 	"rumah-makan/model"
@@ -16,7 +15,8 @@ type MenuService interface {
 	Delete(m model.Menu)
 	All() []model.Menu
 	FindMenuByID(menuID uint64) model.Menu
-	IsAllowedToEdit(customerID string, menuID uint64) bool
+	// IsAllowedToEdit(customerID string, menuID uint64) bool
+	InsertImage(ID uint64, fileLocation string) model.Menu
 }
 
 type menuService struct {
@@ -61,8 +61,16 @@ func (service *menuService) FindMenuByID(menuID uint64) model.Menu {
 	return service.menuRepository.FindMenuByID(menuID)
 }
 
-func (service *menuService) IsAllowedToEdit(customerID string, menuID uint64) bool {
-	m := service.menuRepository.FindMenuByID(menuID)
-	id := fmt.Sprintf("%v", m.CustomerID)
-	return customerID == id
+func (service *menuService) InsertImage(ID uint64, fileLocation string) model.Menu {
+	menu := service.menuRepository.FindByID(ID)
+	menu.Image = fileLocation
+	res := service.menuRepository.InsertMenuImage(menu)
+	return res
 }
+
+
+// func (service *menuService) IsAllowedToEdit(customerID string, menuID uint64) bool {
+// 	m := service.menuRepository.FindMenuByID(menuID)
+// 	id := fmt.Sprintf("%v", m.CustomerID)
+// 	return customerID == id
+// }

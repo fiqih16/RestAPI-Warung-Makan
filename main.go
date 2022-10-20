@@ -48,13 +48,14 @@ func main() {
 		customerRoutes.PUT("/profile", customerController.Update)
 	}
 
-	menuRoutes := r.Group("api/menu", middleware.AuthorizeJWT(jwtService))
+	menuRoutes := r.Group("api/menu")
 	{
 		menuRoutes.GET("/", menuController.All)
 		menuRoutes.POST("/", menuController.Insert)
 		menuRoutes.GET("/:id", menuController.FindMenuByID)
 		menuRoutes.PUT("/:id", menuController.Update)
 		menuRoutes.DELETE("/:id", menuController.Delete)
+		menuRoutes.POST("/image/:id", menuController.InsertMenuImage)
 	}
 
 	transactionRoutes := r.Group("api/transaction", middleware.AuthorizeJWT(jwtService))
