@@ -31,6 +31,7 @@ github.com/mashingan/smapping
 | `GET`    | api/menu/:id         | Get Menu By Id                                                        |
 | `PUT`    | api/menu/:id         | Edit Menu By Id                                                       |
 | `DELETE` | api/menu/:id         | Delete Menu By Id                                                     |
+| `POST`   | api/menu/image/:id   | Update Image Menu By Id                                               |
 | `POST`   | api/transaction/     | Create Transaction                                                    |
 | `GET`    | api/transaction      | Get All Transaction                                                   |
 | `DELETE` | api/transaction/:id  | Delete Transaction By Id                                              |
