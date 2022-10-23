@@ -30,6 +30,19 @@ func NewAuthController(authService service.AuthService, jwtService service.JWTSe
 	}
 }
 
+
+// Login
+// @Summary Login
+// @Description Login
+// @Tags Auth
+// @Accept  json
+// @Produce  json
+// @Param email body string true "Email"
+// @Param password body string true "Password"
+// @Success 200 {object} model.Customer
+// @Failure 400 {object} helper.APIResponse
+// @Router /auth/login [post] 
+
 func (c *authController) Login(ctx *gin.Context) {
 	var loginDTO dto.LoginDto
 	errDTO := ctx.ShouldBind(&loginDTO)
@@ -49,6 +62,19 @@ func (c *authController) Login(ctx *gin.Context) {
 	response := helper.BuildErrorResponse("Please check again your credential", "Invalid Credential", helper.EmptyObj{})
 	ctx.AbortWithStatusJSON(http.StatusUnauthorized, response)
 }
+
+
+// Register is a function to register new user
+// @Summary Register new user
+// @Description Register new user
+// @Tags Auth
+// @Accept  json
+// @Produce  json
+// @Param register body dto.RegisterDto true "Register"
+// @Success 201 {object} dto.RegisterDto "Register"
+// @Failure 400 {object} helper.APIResponse "Error"
+// @Router /register [post]
+// @Security ApiKeyAuth
 
 func (c *authController) Register(ctx *gin.Context) {
 	var registerDTO dto.RegisterDto

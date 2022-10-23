@@ -33,6 +33,16 @@ func NewMenuController(menuServ service.MenuService, jwtServ service.JWTService)
 	}
 }
 
+
+// AllMenu
+// @Summary Show all menu
+// @Description get all menu
+// @Accept  json
+// @Produce  json
+// @Tags Menu
+// @Success 200 {object} helper.Response
+// @Router /menu [get]
+
 func (c *menuController) All(context *gin.Context) {
 	var menus []model.Menu = c.menuService.All()
 	res := helper.BuildResponse(true, "OK", menus)
@@ -58,6 +68,22 @@ func (c *menuController) FindMenuByID(context *gin.Context) {
 	}
 }
 
+
+// InsertMenu
+// @Security bearerAuth
+// @Summary Insert new menu
+// @Description Insert new menu
+// @Tags Menu
+// @Accept  json
+// @Produce  json
+// @Param name body string true "Name"
+// @Param price body int true "Price"
+// @Param description body string true "Description"
+// @Param image body string true "Image"
+// @Param restaurant_id body int true "Restaurant ID"
+// @Success 201 {object} helper.Response
+// @Router / [post]
+
 func (c *menuController) Insert(context *gin.Context) {
 	var menuCreateDTO dto.MenuCreateDTO
 	errDTO := context.ShouldBind(&menuCreateDTO)
@@ -71,6 +97,23 @@ func (c *menuController) Insert(context *gin.Context) {
 	}
 }
 
+
+// UpdateMenu
+// @Security bearerAuth
+// @Summary Update menu
+// @Description Update menu
+// @Tags Menu
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Menu ID"
+// @Param name body string true "Name"
+// @Param price body int true "Price"
+// @Param description body string true "Description"
+// @Param image body string true "Image"
+// @Param restaurant_id body int true "Restaurant ID"
+// @Success 200 {object} helper.Response
+// @Router /{id} [put]
+ 
 func (c *menuController) Update(context *gin.Context) {
 	var menuUpdateDTO dto.MenuUpdateDTO
 	errDTO := context.ShouldBind(&menuUpdateDTO)

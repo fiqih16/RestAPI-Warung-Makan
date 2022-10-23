@@ -1,0 +1,15 @@
+basePath: /api/menu
+host: localhost:8080
+info:
+  contact:
+    name: Swagger API Team
+    url: http://swagger.io
+  description: This is a sample server for a Rumah Makan API.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Rumah Makan API Documentation
+  version: "1.0"
+paths: {}
+swagger: "2.0"

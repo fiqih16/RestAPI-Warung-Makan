@@ -8,6 +8,10 @@ github.com/joho/godotenv
 github.com/dgrijalva/jwt-go
 github.com/golang/crypto
 github.com/mashingan/smapping
+
+github.com/swaggo/swag/cmd/swag
+github.com/swaggo/files
+github.com/swaggo/gin-swagger
 ```
 
 ## Installation
