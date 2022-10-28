@@ -33,16 +33,17 @@ func NewMenuController(menuServ service.MenuService, jwtServ service.JWTService)
 	}
 }
 
+// @BasePath /
 
-// AllMenu
+// PingExample godoc
 // @Summary Show all menu
-// @Description get all menu
-// @Accept  json
-// @Produce  json
+// @Schemes
+// @Description Get Menu
 // @Tags Menu
-// @Success 200 {object} helper.Response
-// @Router /menu [get]
-
+// @Accept json
+// @Produce json
+// @Success 200 {string} model.Menu
+// @Router /api/menu [get]
 func (c *menuController) All(context *gin.Context) {
 	var menus []model.Menu = c.menuService.All()
 	res := helper.BuildResponse(true, "OK", menus)
@@ -84,6 +85,17 @@ func (c *menuController) FindMenuByID(context *gin.Context) {
 // @Success 201 {object} helper.Response
 // @Router / [post]
 
+// PingExample godoc
+// @Summary Insert new menu
+// @Description Insert new menu
+// @Tags Menu
+// @Accept  json
+// @Produce  json
+// @Param nama_menu body string true "Nama Menu"
+// @Param harga body int true "Harga"
+// @Param status body string true "Status"
+// @Success 201 {object} helper.Response
+// @Router /api/menu [post]
 func (c *menuController) Insert(context *gin.Context) {
 	var menuCreateDTO dto.MenuCreateDTO
 	errDTO := context.ShouldBind(&menuCreateDTO)

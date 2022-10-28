@@ -4,7 +4,7 @@ import (
 	"rumah-makan/config"
 	"rumah-makan/controller"
 	"rumah-makan/docs"
-	_ "rumah-makan/docs"
+	"rumah-makan/middleware"
 	"rumah-makan/repository"
 	"rumah-makan/service"
 
@@ -48,23 +48,22 @@ var (
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
 // @host localhost:8080
-// @BasePath /api/menu
-
+// @BasePath /
 func main() {
 	defer config.CloseDBConn(db)
 	r := gin.Default()
 	
-	// authRoutes := r.Group("api/auth")
-	// {
-	// 	authRoutes.POST("/login", authController.Login)
-	// 	authRoutes.POST("/register", authController.Register)
-	// }
+	authRoutes := r.Group("api/auth")
+	{
+		authRoutes.POST("/login", authController.Login)
+		authRoutes.POST("/register", authController.Register)
+	}
 
-	// customerRoutes := r.Group("api/customer", middleware.AuthorizeJWT(jwtService))
-	// {
-	// 	customerRoutes.GET("/profile", customerController.Profile)
-	// 	customerRoutes.PUT("/profile", customerController.Update)
-	// }
+	customerRoutes := r.Group("api/customer", middleware.AuthorizeJWT(jwtService))
+	{
+		customerRoutes.GET("/profile", customerController.Profile)
+		customerRoutes.PUT("/profile", customerController.Update)
+	}
 
 	menuRoutes := r.Group("api/menu")
 	{
@@ -76,21 +75,16 @@ func main() {
 		menuRoutes.POST("/image/:id", menuController.InsertMenuImage)
 	}
 
-	// transactionRoutes := r.Group("api/transaction", middleware.AuthorizeJWT(jwtService))
-	// {
-	// 	transactionRoutes.POST("/", transactionController.InsertTransaction)
-	// 	transactionRoutes.GET("/", transactionController.AllTransaction)
-	// 	transactionRoutes.PUT("/:id", transactionController.UpdateTransaction)
-	// 	transactionRoutes.DELETE("/:id", transactionController.DeleteTransaction)
-	// }
+	transactionRoutes := r.Group("api/transaction", middleware.AuthorizeJWT(jwtService))
+	{
+		transactionRoutes.POST("/", transactionController.InsertTransaction)
+		transactionRoutes.GET("/", transactionController.AllTransaction)
+		transactionRoutes.PUT("/:id", transactionController.UpdateTransaction)
+		transactionRoutes.DELETE("/:id", transactionController.DeleteTransaction)
+	}
 
 	// programmatically set swagger info
-	docs.SwaggerInfo.Title = "Swagger Example API"
-	docs.SwaggerInfo.Description = "This is a sample server Petstore server."
-	docs.SwaggerInfo.Version = "1.0"
-	docs.SwaggerInfo.Host = "localhost:8080"
-	docs.SwaggerInfo.BasePath = "/api/menu/"
-	docs.SwaggerInfo.Schemes = []string{"http", "https"}
+	docs.SwaggerInfo.BasePath = "/"
 
 	// use ginSwagger middleware to serve the API docs
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

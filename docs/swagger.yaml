@@ -1,4 +1,14 @@
-basePath: /api/menu
+basePath: /
+definitions:
+  helper.Response:
+    properties:
+      data: {}
+      errors: {}
+      message:
+        type: string
+      status:
+        type: boolean
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -11,5 +21,53 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Rumah Makan API Documentation
   version: "1.0"
-paths: {}
+paths:
+  /api/menu:
+    get:
+      consumes:
+      - application/json
+      description: Get Menu
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Show all menu
+      tags:
+      - Menu
+    post:
+      consumes:
+      - application/json
+      description: Insert new menu
+      parameters:
+      - description: Nama Menu
+        in: body
+        name: nama_menu
+        required: true
+        schema:
+          type: string
+      - description: Harga
+        in: body
+        name: harga
+        required: true
+        schema:
+          type: integer
+      - description: Status
+        in: body
+        name: status
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/helper.Response'
+      summary: Insert new menu
+      tags:
+      - Menu
 swagger: "2.0"
